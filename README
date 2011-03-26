@@ -1,0 +1,32 @@
+Implementation of Othello/Reversi for use in game programming
+or board game AI research.
+
+If you plan on using this, you probably want to make your own
+rate(board) method for the AIPlayer class, and then simply use
+something like result(AIPlayer(rate), RandomPlayer()) to retrieve
+the result of a game.
+
+If you want to use the board state as input to some algorithm, the
+method Board.to_list() may come in handy.
+
+Overview:
+
+Classes
+	Board
+		Class representing board state, able to generate successor board
+		states.
+	ConsolePlayer
+		Prompts the user for moves.
+	RandomPlayer
+		Chooses a random move.
+	AIPlayer
+		Uses a rating function to choose moves.
+
+Utilities
+	game(A, B, board_size)
+		An iterable yielding the states of a game between A and B on a
+		board of size board_size
+	result(A, B, board_size)
+		Convenience method yielding the final board state of a game 
+		between A and B on a board of size board_size
+	
