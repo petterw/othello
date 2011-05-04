@@ -99,7 +99,7 @@ class Board:
 		self.board[x][y] = value
 		self.counts[value] += 1
 	
-	def put(self,x,y,value):
+	def put(self, x, y, value):
 		""" put method for the console player. prevents illegal moves
 		"""
 		flips = self.flips(x,y,value)
@@ -177,7 +177,7 @@ class RandomPlayer:
 	"""
 	def __init__(self):
 		pass
-	def rate(self,successors,board,my_value):
+	def rate(self, successors, board, my_value):
 		return [random.random() for a in successors]
 
 class ConsolePlayer:
@@ -225,7 +225,7 @@ class AIPlayer:
 	def __init__(self,rate):
 		self.rate = rate
 
-def game(A, B, board_size=8):
+def game(A, B, board_size = 8):
 	""" A generator yielding the states of a game between A and B
 	"""
 	players = {1:A,-1:B}
@@ -233,18 +233,18 @@ def game(A, B, board_size=8):
 	player = 1
 	while not board.done():
 		successors = board.successors(player)
-		if not len(successors)==0:
-			ratings = players[player].rate(successors,board,player)
+		if not len(successors) == 0:
+			ratings = players[player].rate(successors,board, player)
 			successor = 0
 			for x in xrange(1,len(successors)):
 				if ratings[x] > ratings[successor]:
 					successor = x
 			board = successors[successor]
-			yield (board,False)
+			yield (board, False)
 		player *= -1
 	yield (board,True)
 
-def result(A, B, board_size=8):
+def result(A, B, board_size = 8):
 	""" Convenience method for retrieving the final board state of a
 		game between A and B
 	"""
