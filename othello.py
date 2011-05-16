@@ -23,7 +23,7 @@ import sys, random
 
 class Board:
 	def __init__(self, size = 8):
-		# create board
+		# create board list
 		self.board = [[0]*size for x in xrange(size)]
 		self.size = size
 		self.counts = {0:size**2,1:0,-1:0}
@@ -112,7 +112,7 @@ class Board:
 		""" is it legal to place the value in x,y? Flips are passed in
 			to avoid repeated computation
 		"""
-		return len(flips) > 0 and x > -1 and x < self.size and y > -1 and y < self.size and self.board[x][y]==0
+		return len(flips) > 0 and x > -1 and x < self.size and y > -1 and y < self.size and self.board[x][y] == 0
 	
 	def flips(self,x,y,value):
 		""" Returns the flip operations that follow as a consequence of
@@ -153,13 +153,15 @@ class Board:
 		s = []
 		for x in xrange(self.size):
 			for y in xrange(self.size):
-				flips = self.flips(x, y, value)
-				if self.legal(x, y, value, flips):
-					successor = self.clone()
-					successor.set_value(x,y,value)
-					for f in flips:
-						successor.set_value(f[0],f[1],value)
-					s.append(successor)
+                # added for a chance at a speedup (?):
+                if self.board[x][y] == 0:
+                    flips = self.flips(x, y, value)
+                    if self.legal(x, y, value, flips):
+                        successor = self.clone()
+                        successor.set_value(x,y,value)
+                        for f in flips:
+                            successor.set_value(f[0],f[1],value)
+                        s.append(successor)
 		self.memoized_successors[value] = s
 		return s
 	
@@ -222,7 +224,7 @@ class AIPlayer:
 	""" An AI player placeholder, for plugging in a custom state rating 
 		function
 	"""
-	def __init__(self,rate):
+	def __init__(self, rate):
 		self.rate = rate
 
 def game(A, B, board_size = 8):
