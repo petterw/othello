@@ -41,8 +41,7 @@ class Board:
         """ return the board state as a list, useful for evaluating it 
             externally
         """
-        
-        return [remove_2(item) for sublist in self.board for item in sublist]
+        return [item for sublist in self.board for item in sublist]
         
     def show(self):
         """ print board to stdout
@@ -56,7 +55,7 @@ class Board:
             #vnumbers
             sys.stdout.write(str(x+1) + " ")
             for y in xrange(self.size):
-                if(self.board[x][y]==0 or self.board[x][y]==2):
+                if(self.board[x][y]==0):
                     sys.stdout.write('   ,')
                 elif(self.board[x][y]==1):
                     sys.stdout.write(' + ,')
@@ -90,36 +89,16 @@ class Board:
         """ set the value in coordinate x,y
         """
         # check if we are breaking the rules/have a bug
-        assert not (value == 0 and not (self.board[x][y] == 0 or self.board[x][y] == 2))
+        assert not (value == 0 and self.board[x][y] != 0)
         
         # clear successor state memoization
         self.memoized_successors = {1:False,-1:False}
         
         #update counts and set value
-        current_value = self.board[x][y]
-        if current_value == 2:
-            current_value = 0
-        self.counts[current_value] -= 1
+        self.counts[self.board[x][y]] -= 1
         self.board[x][y] = value
-        if value == 2:
-            value = 0
         self.counts[value] += 1
-        
-        self.tag_region_around(x, y)
-        
-    def tag_region_around(self, x, y):
-        """ Tag a region around a move with value = 2 so that it will
-            Be considered for put next round.
-        """ 
-        for xdelta in xrange(-1,2):
-            for ydelta in xrange(-1,2):
-                newx = x + xdelta
-                newy = y + ydelta
-                # not in the center
-                if xdelta != 0 or ydelta != 0:
-                    if newx > -1 and newx < self.size and newy > -1 and newy < self.size and self.board[newx][newy] == 0:
-                        self.board[newx][newy] = 2
-        
+    
     def put(self, x, y, value):
         """ put method for the console player. prevents illegal moves
         """
@@ -133,7 +112,7 @@ class Board:
         """ is it legal to place the value in x,y? Flips are passed in
             to avoid repeated computation
         """
-        return len(flips) > 0 and x > -1 and x < self.size and y > -1 and y < self.size and (self.board[x][y] == 0 or self.board[x][y] == 2)
+        return len(flips) > 0 and x > -1 and x < self.size and y > -1 and y < self.size and self.board[x][y] == 0
     
     def flips(self,x,y,value):
         """ Returns the flip operations that follow as a consequence of
@@ -174,7 +153,7 @@ class Board:
         s = []
         for x in xrange(self.size):
             for y in xrange(self.size):
-                if self.board[x][y] == 2:
+                if self.board[x][y] == 0:
                     flips = self.flips(x, y, value)
                     if self.legal(x, y, value, flips):
                         successor = self.clone()
@@ -277,7 +256,3 @@ if __name__ == "__main__":
     A = RandomPlayer()
     B = ConsolePlayer()
     result(A,B)
-def remove_2(item):
-    if item == 2:
-        return 0
-    return item
